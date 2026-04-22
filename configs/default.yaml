@@ -1,0 +1,116 @@
+# Default configuration for the ULT-NILM experiments.
+# Values mirror Table II of the paper (supernet configuration) and the
+# four transfer scenarios used in Table III.
+
+supernet:
+  # --- Supernet structural parameters (Table II) ---
+  base_stage_width: [64, 128, 256]
+  first_stage_width: [32, 64]
+  first_stage_kernel_sizes: [5, 7]
+  last_stage_width: 256
+  first_stage_stride: 1
+  base_stage_stride: 1
+  # --- Elastic search space ---
+  ks_list: [1, 3, 5]
+  expand_ratio_list: [1, 3, 5]
+  depth_list: [1, 2, 3]
+  # --- Misc ---
+  width_mult: 1.0
+  dropout_rate: 0.4
+  act_func: relu
+  bn_param: [0.1, 0.00001]
+  n_classes: 1
+  use_frequency_features: true
+  domain_adaptation_method: sinkhorn_coral
+  seq2seq: true
+
+training:
+  learning_rate: 0.001
+  batch_size: 256
+  epochs: 100
+  eval_percentage: 0.1
+  eval_period_div: 10
+  early_stop_threshold_evals: 5
+
+progressive_shrinking:
+  num_stages: 4
+  epochs_per_stage: 10
+  num_candidates_per_step: 32
+  omega_memory: 1.0
+  omega_latency: 0.0
+  beta_min: 0.000001
+  beta_max: 1.0
+
+domain_adaptation:
+  # --- Loss (Section III.C, Eq. 18-27) ---
+  sinkhorn_epsilon: 0.1      # eta
+  sinkhorn_iterations: 100   # J
+  sinkhorn_coral_weight: 0.6 # gamma
+  domain_loss_weight: 0.3    # lambda
+  # --- Optimisation ---
+  epochs: 1000
+  batch_size: 64
+  early_stop_min_epochs: 200
+
+# Dataset paths. Override via --dataset-path on the command line.
+dataset_path: /path/to/datasets
+
+# --- Transfer scenarios used in the paper's Table III ---
+# source.{houses, houses_test} feeds the cloud supernet training; target
+# is the unlabeled domain for LCT. For intra-dataset scenarios the target
+# re-uses the held-out house as the unlabeled deployment domain.
+scenarios:
+  intra_redd:
+    source:
+      dataset: redd
+      houses: [1, 2, 4, 5, 6]
+      houses_test: [3]
+    target:
+      dataset: redd
+      houses: [3]
+      houses_test: [3]
+
+  intra_ukdale:
+    source:
+      dataset: ukdale
+      houses: [1, 3, 4]
+      houses_test: [2]
+    target:
+      dataset: ukdale
+      houses: [2]
+      houses_test: [2]
+
+  redd_to_ukdale:
+    source:
+      dataset: redd
+      houses: [1, 2, 4, 5, 6]
+      houses_test: [3]
+    target:
+      dataset: ukdale
+      houses: [2]
+      houses_test: [2]
+
+  ukdale_to_redd:
+    source:
+      dataset: ukdale
+      houses: [1, 3, 4]
+      houses_test: [2]
+    target:
+      dataset: redd
+      houses: [3]
+      houses_test: [3]
+
+# --- Appliance aliases used in REDD vs UK-DALE (spelling differs) ---
+appliance_aliases:
+  washing_machine:
+    redd: washing machine
+    ukdale: washing_machine
+  dishwasher:
+    redd: dishwaser
+    ukdale: dish_washer
+  fridge:
+    redd: fridge
+    ukdale: fridge
+  microwave:
+    redd: microwave
+    ukdale: microwave

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ult-nilm"
+version = "0.1.0"
+description = "Unsupervised Lightweight Transfer Learning for Edge Non-Intrusive Load Monitoring"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Taoyu Lu" },
+    { name = "Yehui Li" },
+    { name = "Ruiyang Yao" },
+    { name = "Yi Wang" },
+]
+dependencies = [
+    "torch>=2.0",
+    "numpy>=1.23",
+    "pandas>=1.5",
+    "scikit-learn>=1.2",
+    "tqdm>=4.60",
+    "pyyaml>=6.0",
+    "h5py>=3.7",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.4"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ult_nilm*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E741"]
